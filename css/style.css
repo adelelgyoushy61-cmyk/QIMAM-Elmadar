@@ -1,7 +1,4 @@
-/* ==========================================================================
-   QIMAM HEAVY TRANSPORT & LOGISTICS - UNIFIED DESIGN SYSTEM (OPTIMIZED)
-   Powered by Bootstrap 5 RTL + GSAP 3 & ScrollTrigger
-   ========================================================================== */
+
 
 :root {
     --primary: #ffc107;
@@ -1025,4 +1022,25 @@ a {
     .social-links {
         justify-content: center;
     }
+}
+
+/* ===== NATIVE ULTRA-FAST ANIMATIONS (NO GSAP) ===== */
+.gsap-hero-item,
+.gsap-hero-card,
+.gsap-heading,
+.gsap-card-item,
+.trailer-img-wrapper {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.is-visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+.gsap-progress-bar {
+    width: 0%;
+    transition: width 1s ease-out;
 }
