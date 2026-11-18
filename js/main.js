@@ -1,10 +1,7 @@
 /* ==========================================================================
-   QIMAM HEAVY TRANSPORT & LOGISTICS - GSAP 3 + SCROLLTRIGGER ENGINE (OPTIMIZED)
+   QIMAM HEAVY TRANSPORT - ULTRA-FAST VANILLA JS ENGINE (ZERO LAG)
    ========================================================================== */
 
-const isMobileDevice = window.matchMedia("(max-width: 768px)").matches;
-
-// بيانات تفصيلية للخدمات والمشاريع والنقل التفاعلي (تم تصحيح مسار الصور إلى img/)
 const QIMAM_SERVICES_DATA = {
     s1: {
         title: "نقل المعدات الثقيلة واللوابد",
@@ -156,238 +153,65 @@ function showQimamToast(message, icon = "fa-check-circle") {
     }, 3800);
 }
 
-function initGSAPAnimations() {
-    if (typeof gsap === "undefined") return;
-    if (typeof ScrollTrigger !== "undefined") {
-        gsap.registerPlugin(ScrollTrigger);
-        ScrollTrigger.config({ ignoreMobileResize: true }); // يمنع التقطيع عند اختفاء شريط عنوان المتصفح في الموبايل
-    }
+// عداد أرقام خفيف جداً بدون مكتبات
+function animateCounter(el) {
+    if (el.dataset.counted === "true") return;
+    el.dataset.counted = "true";
+    const target = parseFloat(el.getAttribute("data-target") || "0");
+    const suffix = el.getAttribute("data-suffix") || "";
+    const duration = 1400;
+    const startTime = performance.now();
 
-    // 1. شريط تقدم القراءة العلوي (باستخدام scaleX بدلاً من width لمنع الـ Reflow)
-    const topProgress = document.getElementById("topScrollProgress");
-    if (topProgress && typeof ScrollTrigger !== "undefined" && !isMobileDevice) {
-        gsap.set(topProgress, { width: "100%", scaleX: 0, transformOrigin: "right center" });
-        gsap.to(topProgress, {
-            scaleX: 1,
-            ease: "none",
-            scrollTrigger: {
-                trigger: document.body,
-                start: "top top",
-                end: "bottom bottom",
-                scrub: 0.1
-            }
-        });
-    }
-
-    // 2. أنيميشن الهيرو عند فتح الصفحة
-    const heroItems = document.querySelectorAll(".gsap-hero-item");
-    if (heroItems.length > 0) {
-        gsap.fromTo(heroItems,
-            { opacity: 0, y: isMobileDevice ? 20 : 35 },
-            {
-                opacity: 1,
-                y: 0,
-                duration: isMobileDevice ? 0.55 : 0.85,
-                stagger: isMobileDevice ? 0.08 : 0.14,
-                ease: "power2.out",
-                clearProps: "transform"
-            }
-        );
-    }
-
-    const heroCard = document.querySelector(".gsap-hero-card");
-    if (heroCard) {
-        gsap.fromTo(heroCard,
-            { opacity: 0, y: 25 },
-            { opacity: 1, y: 0, duration: 0.7, delay: 0.15, ease: "power2.out", clearProps: "transform" }
-        );
-    }
-
-    // 3. أنيميشن العناوين والأقسام عند السكرول
-    const revealHeadings = document.querySelectorAll(".gsap-heading");
-    revealHeadings.forEach((heading) => {
-        gsap.fromTo(heading,
-            { opacity: 0, y: 24 },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 0.6,
-                ease: "power2.out",
-                clearProps: "transform",
-                scrollTrigger: typeof ScrollTrigger !== "undefined" ? {
-                    trigger: heading,
-                    start: "top 90%",
-                    once: true
-                } : undefined
-            }
-        );
-    });
-
-    // 4. أنيميشن الكروت بنظام Stagger خفيف
-    const cardRows = document.querySelectorAll(".gsap-cards-row");
-    cardRows.forEach((row) => {
-        const cards = row.querySelectorAll(".gsap-card-item");
-        if (cards.length > 0) {
-            gsap.fromTo(cards,
-                { opacity: 0, y: isMobileDevice ? 25 : 40 },
-                {
-                    opacity: 1,
-                    y: 0,
-                    duration: isMobileDevice ? 0.5 : 0.7,
-                    stagger: isMobileDevice ? 0.06 : 0.12,
-                    ease: "power2.out",
-                    clearProps: "transform",
-                    scrollTrigger: typeof ScrollTrigger !== "undefined" ? {
-                        trigger: row,
-                        start: "top 88%",
-                        once: true
-                    } : undefined
-                }
-            );
-        }
-    });
-
-    // 5. أنيميشن قوائم المميزات وصورة المقطورة
-    const featureItems = document.querySelectorAll(".feature-list li");
-    if (featureItems.length > 0) {
-        gsap.fromTo(featureItems,
-            { opacity: 0, x: isMobileDevice ? 15 : 30 },
-            {
-                opacity: 1,
-                x: 0,
-                duration: 0.45,
-                stagger: 0.06,
-                ease: "power2.out",
-                clearProps: "transform",
-                scrollTrigger: typeof ScrollTrigger !== "undefined" ? {
-                    trigger: ".feature-list",
-                    start: "top 88%",
-                    once: true
-                } : undefined
-            }
-        );
-    }
-
-    const trailerWrap = document.querySelector(".trailer-img-wrapper");
-    if (trailerWrap) {
-        gsap.fromTo(trailerWrap,
-            { opacity: 0, y: 25 },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 0.7,
-                ease: "power2.out",
-                clearProps: "transform",
-                scrollTrigger: typeof ScrollTrigger !== "undefined" ? {
-                    trigger: trailerWrap,
-                    start: "top 88%",
-                    once: true
-                } : undefined
-            }
-        );
-    }
-
-    // 6. عدادات الأرقام بـ GSAP
-    const counters = document.querySelectorAll(".count, .stat-number[data-target]");
-    counters.forEach((counter) => {
-        const target = parseFloat(counter.getAttribute("data-target") || "0");
-        const suffix = counter.getAttribute("data-suffix") || "";
-        const obj = { val: 0 };
-
-        const runCount = () => {
-            if (counter.dataset.counted === "true") return;
-            counter.dataset.counted = "true";
-            gsap.to(obj, {
-                val: target,
-                duration: 1.8,
-                ease: "power2.out",
-                snap: { val: 1 },
-                onUpdate: () => {
-                    counter.textContent = obj.val.toLocaleString("en-US") + suffix;
-                }
-            });
-        };
-
-        if (typeof ScrollTrigger !== "undefined") {
-            ScrollTrigger.create({
-                trigger: counter,
-                start: "top 92%",
-                once: true,
-                onEnter: runCount
-            });
+    function update(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(easeOut * target);
+        el.textContent = current.toLocaleString("en-US") + suffix;
+        if (progress < 1) {
+            requestAnimationFrame(update);
         } else {
-            runCount();
+            el.textContent = target.toLocaleString("en-US") + suffix;
         }
+    }
+    requestAnimationFrame(update);
+}
+
+// تشغيل الحركات والعدادات بـ IntersectionObserver المدمج في المتصفح
+function initFastAnimations() {
+    // إظهار عناصر الهيرو فوراً بتدريج ناعم
+    document.querySelectorAll(".gsap-hero-item, .gsap-hero-card").forEach((el, i) => {
+        setTimeout(() => el.classList.add("is-visible"), i * 70);
     });
 
-    // 7. أشرطة التقدم في بطاقات الإحصائيات
-    const progressBars = document.querySelectorAll(".gsap-progress-bar");
-    progressBars.forEach((bar) => {
-        const targetWidth = bar.getAttribute("data-width") || "90%";
-        gsap.fromTo(bar,
-            { width: "0%" },
-            {
-                width: targetWidth,
-                duration: 1.2,
-                ease: "power2.out",
-                scrollTrigger: typeof ScrollTrigger !== "undefined" ? {
-                    trigger: bar,
-                    start: "top 92%",
-                    once: true
-                } : undefined
-            }
-        );
-    });
+    const elementsToWatch = document.querySelectorAll(
+        ".gsap-heading, .gsap-card-item, .trailer-img-wrapper, .count, .stat-number[data-target], .gsap-progress-bar"
+    );
 
-    // 8. شريط التقدم الجانبي في قسم الخدمات اللوجستية (موقوف على الموبايل لمنع التقطيع)
-    const sectionProgress = document.getElementById("sectionProgress");
-    const logisticsSection = document.querySelector(".logistics-section");
-    if (sectionProgress && logisticsSection && typeof ScrollTrigger !== "undefined" && !isMobileDevice) {
-        gsap.set(sectionProgress, { height: "100%", scaleY: 0, transformOrigin: "top center" });
-        gsap.to(sectionProgress, {
-            scaleY: 1,
-            ease: "none",
-            scrollTrigger: {
-                trigger: logisticsSection,
-                start: "top 75%",
-                end: "bottom 25%",
-                scrub: 0.2
+    if (!("IntersectionObserver" in window)) {
+        elementsToWatch.forEach((el) => el.classList.add("is-visible"));
+        return;
+    }
+
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const el = entry.target;
+
+            if (el.classList.contains("count") || el.hasAttribute("data-target")) {
+                animateCounter(el);
+            } else if (el.classList.contains("gsap-progress-bar")) {
+                el.style.width = el.getAttribute("data-width") || "90%";
+            } else {
+                el.classList.add("is-visible");
             }
+            obs.unobserve(el);
         });
-    }
+    }, { threshold: 0.12, rootMargin: "0px 0px -20px 0px" });
+
+    elementsToWatch.forEach((el) => observer.observe(el));
 }
 
-// الجسيمات المتحركة (تشتغل على الكمبيوتر فقط وتقف على الموبايل لتوفير المعالج)
-function initHeroParticles() {
-    const container = document.getElementById("particles");
-    if (!container || isMobileDevice) return;
-    container.innerHTML = "";
-    const count = 8; // تقليل العدد من 16 إلى 8 لأداء أنعم
-    for (let i = 0; i < count; i++) {
-        const p = document.createElement("div");
-        p.className = "particle";
-        const size = Math.random() * 24 + 10;
-        p.style.width = `${size}px`;
-        p.style.height = `${size}px`;
-        p.style.left = `${Math.random() * 100}%`;
-        p.style.top = `${Math.random() * 100}%`;
-        container.appendChild(p);
-
-        if (typeof gsap !== "undefined") {
-            gsap.to(p, {
-                y: "random(-35, 35)",
-                x: "random(-25, 25)",
-                opacity: "random(0.25, 0.75)",
-                duration: "random(4, 7)",
-                repeat: -1,
-                yoyo: true,
-                ease: "sine.inOut"
-            });
-        }
-    }
-}
-
-// فلتر المشاريع التفاعلي
 function initProjectFilter() {
     const filterBtns = document.querySelectorAll(".filter-btn");
     const projectCols = document.querySelectorAll("#projects-grid > [data-category]");
@@ -399,31 +223,19 @@ function initProjectFilter() {
             this.classList.add("active");
             const filter = this.getAttribute("data-filter");
 
-            const toShow = [];
             projectCols.forEach((col) => {
                 const cat = col.getAttribute("data-category");
                 if (filter === "all" || cat === filter) {
                     col.style.display = "block";
-                    toShow.push(col);
+                    requestAnimationFrame(() => col.classList.add("is-visible"));
                 } else {
                     col.style.display = "none";
                 }
             });
-
-            if (typeof gsap !== "undefined" && toShow.length) {
-                gsap.fromTo(toShow,
-                    { opacity: 0, y: 20 },
-                    { opacity: 1, y: 0, duration: 0.35, stagger: 0.06, ease: "power2.out", clearProps: "transform" }
-                );
-            }
-            if (typeof ScrollTrigger !== "undefined") {
-                ScrollTrigger.refresh();
-            }
         });
     });
 }
 
-// نافذة تفاصيل الخدمة أو المشروع (Modal)
 function openDetailsModal(type, key) {
     const data = type === "service" ? QIMAM_SERVICES_DATA[key] : QIMAM_PROJECTS_DATA[key];
     if (!data) return;
@@ -436,10 +248,6 @@ function openDetailsModal(type, key) {
         modalEl.tabIndex = -1;
         document.body.appendChild(modalEl);
     }
-
-    const imgPath = window.__QIMAM_INLINE_IMAGES__ && window.__QIMAM_INLINE_IMAGES__[data.img]
-        ? window.__QIMAM_INLINE_IMAGES__[data.img]
-        : data.img;
 
     const specsHtml = data.specs
         ? `<h6 class="fw-bold text-dark mt-3 mb-2">مميزات ومواصفات الخدمة:</h6>
@@ -463,7 +271,7 @@ function openDetailsModal(type, key) {
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 rounded-4 overflow-hidden shadow-lg">
                 <div class="position-relative" style="height: 240px;">
-                    <img src="${imgPath}" class="w-100 h-100 object-fit-cover" loading="lazy" alt="${data.title}">
+                    <img src="${data.img}" class="w-100 h-100 object-fit-cover" loading="lazy" decoding="async" alt="${data.title}">
                     <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to top, rgba(11,15,23,0.9), rgba(11,15,23,0.25));"></div>
                     <button type="button" class="btn-close btn-close-white position-absolute top-0 start-0 m-3 p-2 bg-dark bg-opacity-50 rounded-circle" data-bs-dismiss="modal" aria-label="إغلاق"></button>
                     <div class="position-absolute bottom-0 end-0 p-4 text-white">
@@ -486,13 +294,11 @@ function openDetailsModal(type, key) {
     `;
 
     if (typeof bootstrap !== "undefined" && bootstrap.Modal) {
-        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-        modal.show();
+        bootstrap.Modal.getOrCreateInstance(modalEl).show();
     }
 }
 window.openDetailsModal = openDetailsModal;
 
-// نظام تتبع الشحنات التفاعلي
 function initTrackingSystem() {
     const trackBtn = document.getElementById("trackShipmentBtn");
     const trackInput = document.getElementById("trackingInput");
@@ -529,7 +335,7 @@ function initTrackingSystem() {
                     <span><i class="fas fa-flag-checkered text-success me-1"></i> إلى: ${info.to}</span>
                 </div>
                 <div class="progress bg-secondary bg-opacity-50 mb-2" style="height: 10px; border-radius: 10px;">
-                    <div class="progress-bar bg-warning" id="liveTrackBar" style="width: 0%; border-radius: 10px;"></div>
+                    <div class="progress-bar bg-warning" id="liveTrackBar" style="width: 0%; border-radius: 10px; transition: width 0.8s ease-out;"></div>
                 </div>
                 <div class="d-flex justify-content-between small text-light mt-2">
                     <span><i class="fas fa-user-shield text-warning me-1"></i> ${info.driver}</span>
@@ -538,13 +344,10 @@ function initTrackingSystem() {
             </div>
         `;
 
-        if (typeof gsap !== "undefined") {
-            gsap.fromTo(trackResult.firstElementChild, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.4 });
-            gsap.to("#liveTrackBar", { width: `${info.progress}%`, duration: 0.9, ease: "power2.out" });
-        } else {
+        requestAnimationFrame(() => {
             const bar = document.getElementById("liveTrackBar");
             if (bar) bar.style.width = `${info.progress}%`;
-        }
+        });
     }
 
     if (trackBtn && trackInput) {
@@ -566,74 +369,36 @@ function initTrackingSystem() {
     });
 }
 
-// التهيئة العامة وتفعيل الـ Lazy Loading التلقائي للصور
 document.addEventListener("DOMContentLoaded", () => {
-    // تفعيل Lazy Loading تلقائياً لكل صور الموقع ما عدا الهيرو
-    document.querySelectorAll("img:not([loading])").forEach((img, index) => {
-        if (index > 1) {
-            img.setAttribute("loading", "lazy");
-            img.setAttribute("decoding", "async");
-        }
-    });
-
-    // تحسين حدث السكرول باستخدام requestAnimationFrame لمنع تكرار الكود في نفس الفريم
     const navbar = document.querySelector(".qimam-navbar");
     const backToTop = document.getElementById("backToTop");
-    let isScrolling = false;
+    let ticking = false;
 
-    const handleScroll = () => {
-        if (!isScrolling) {
+    const onScroll = () => {
+        if (!ticking) {
             window.requestAnimationFrame(() => {
                 const y = window.scrollY;
                 if (navbar) navbar.classList.toggle("navbar-scrolled", y > 50);
                 if (backToTop) backToTop.classList.toggle("show", y > 320);
-                isScrolling = false;
+                ticking = false;
             });
-            isScrolling = true;
+            ticking = true;
         }
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
 
-    if (backToTop) {
-        backToTop.addEventListener("click", () => {
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-    }
-
-    const navCollapse = document.getElementById("navbarNav");
-    if (navCollapse && typeof gsap !== "undefined" && !isMobileDevice) {
-        navCollapse.addEventListener("shown.bs.collapse", () => {
-            gsap.fromTo(
-                navCollapse.querySelectorAll(".nav-item, .nav-mobile-actions"),
-                { opacity: 0, y: 12 },
-                { opacity: 1, y: 0, duration: 0.25, stagger: 0.04, ease: "power2.out" }
-            );
-        });
-    }
-
-    const heroCarousel = document.getElementById("heroCarousel");
-    if (heroCarousel && typeof gsap !== "undefined") {
-        heroCarousel.addEventListener("slid.bs.carousel", (e) => {
-            const activeCaption = e.relatedTarget?.querySelector(".carousel-caption");
-            if (activeCaption) {
-                gsap.fromTo(activeCaption.children,
-                    { opacity: 0, y: 20 },
-                    { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: "power2.out" }
-                );
-            }
-        });
-    }
+    backToTop?.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
 
     const contactForm = document.getElementById("qimamContactForm");
-    if (contactForm) {
-        contactForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const name = (document.getElementById("name")?.value || "").trim();
-            showQimamToast(`شكراً لك ${name ? "أ/ " + name : ""}! تم استلام رسالتك وسيتواصل معك فريق QIMAM فوراً.`);
-            contactForm.reset();
-        });
-    }
+    contactForm?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = (document.getElementById("name")?.value || "").trim();
+        showQimamToast(`شكراً لك ${name ? "أ/ " + name : ""}! تم استلام رسالتك وسيتواصل معك فريق QIMAM فوراً.`);
+        contactForm.reset();
+    });
 
     document.querySelectorAll(".newsletter-form").forEach((form) => {
         form.addEventListener("submit", (e) => {
@@ -643,8 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    initGSAPAnimations();
-    initHeroParticles();
+    initFastAnimations();
     initProjectFilter();
     initTrackingSystem();
 });
